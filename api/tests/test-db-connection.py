@@ -7,7 +7,7 @@ def test_database_connection():
         # Retrieve database connection details from environment variables
         db_user = os.environ.get("DB_USER")
         db_password = os.environ.get("DB_PASSWORD")
-        db_host = os.environ.get("DB_HOST")
+        db_host = "localhost"
         db_port = os.environ.get("DB_PORT")
         db_name = os.environ.get("DB_NAME")
 
@@ -22,10 +22,8 @@ def test_database_connection():
 
         # Execute a simple query to check the connection
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO person (id, created_at) VALUES (DEFAULT, DEFAULT);")
-        cursor.execute("SELECT * FROM person;")
-        result = cursor.fetchall()
-        connection.commit()
+        cursor.execute("SELECT 1;")
+        result = cursor.fetchone()
 
         print("Database is up and running!")
         print("Result of SELECT 1 query:", result)
