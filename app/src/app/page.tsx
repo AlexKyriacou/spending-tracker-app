@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div>
-      <Button disabled>
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        Please wait
+    <div className="flex items-center justify-center min-h-screen">
+      <Button asChild>
+        <Link href="/dashboard">Login</Link>
       </Button>
     </div>
   );
