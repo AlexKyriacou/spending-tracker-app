@@ -40,10 +40,10 @@ export function MainNav() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link
-            href="/link"
+            href="/category/create"
             legacyBehavior
             passHref>
-            <NavigationMenuLink className={getNavLinkClassName("/link")}>
+            <NavigationMenuLink className={getNavLinkClassName("/category/create")}>
               Categories
             </NavigationMenuLink>
           </Link>
