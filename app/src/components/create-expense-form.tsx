@@ -78,7 +78,7 @@ export default function CreateExpenseForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-2/3 space-y-8">
+        className="space-y-8">
         <FormField
           control={form.control}
           name="amount"
