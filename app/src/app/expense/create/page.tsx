@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import CreateExpenseForm from "@/components/create-expense-form";
-import { NavMenu } from "@/components/nav-menu";
+import { NavMenu } from "@/components/nav/nav-menu";
 
 export default function CreateExpensePage() {
   return (

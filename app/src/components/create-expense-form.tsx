@@ -34,6 +34,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import Link from "next/link";
 
 const FormSchema = z.object({
   amount: z.coerce
@@ -77,7 +78,7 @@ export default function CreateExpenseForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-2/3 space-y-6">
+        className="w-2/3 space-y-8">
         <FormField
           control={form.control}
           name="amount"
@@ -117,18 +118,8 @@ export default function CreateExpenseForm() {
                 </SelectContent>
               </Select>
               <FormDescription>
-                {" "}
-                <FormControl>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={cn("w-[175px] pl-3 text-left font-normal")}
-                    onClick={() => {
-                      alert("This is a test");
-                    }}>
-                    {"Add a new category"}
-                  </Button>
-                </FormControl>
+              Or add a {""}
+              <Link href="/category/create">new category</Link>
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -146,7 +137,7 @@ export default function CreateExpenseForm() {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
+                        "pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground"
                       )}>
                       {field.value ? (
