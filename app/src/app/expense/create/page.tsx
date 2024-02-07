@@ -1,5 +1,4 @@
 import CreateExpenseForm from "@/app/expense/create/create-expense-form";
-import { NavMenu } from "@/components/nav/nav-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function CreateExpensePage() {
