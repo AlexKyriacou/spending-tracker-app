@@ -49,13 +49,16 @@ const FormSchema = z.object({
     .multipleOf(0.01, {
       message: "Must be a maximum of 2 decimal places",
     }),
+
   category: z.string({
     required_error: "Please select an category.",
   }),
+
   date: z.coerce.date({
     required_error: "Please select a date",
     invalid_type_error: "That's not a date!",
   }),
+
   recurrenceValue: z.coerce
     .number({
       required_error: "Please enter a value.",
@@ -65,15 +68,21 @@ const FormSchema = z.object({
     .nonnegative({
       message: "Must be a positive number",
     }),
+
   recurrencePeriod: z.string({
     required_error: "Please select a period.",
   }),
+
   recurrenceEndDate: z.coerce
     .date({
       required_error: "Please select an end date.",
       invalid_type_error: "That's not a date!",
     })
     .optional(),
+
+  recurring: z.boolean({
+    required_error: "Please select a recurring option.",
+  }),
 });
 
 export default function CreateExpenseForm() {
@@ -189,14 +198,25 @@ export default function CreateExpenseForm() {
             </FormItem>
           )}
         />
-        <div className="flex items-center space-x-2">
-          <Switch
-            checked={isRecurring}
-            onCheckedChange={(value) => setIsRecurring(value)}
-            id="recurring"
-          />
-          <Label htmlFor="recurring">Recurring</Label>
-        </div>
+        <FormField
+          control={form.control}
+          name="recurring"
+          render={({ field }) => (
+            <FormItem className="flex items-center space-x-2">
+              <FormLabel>Recurring</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={isRecurring}
+                  onCheckedChange={(value) => {
+                    setIsRecurring(value);
+                    field.onChange(value);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {isRecurring && (
           <div className="flex items-center space-x-4 rounded-md border p-4">
             <Label className="mx-2 whitespace-nowrap">Occurs every</Label>
