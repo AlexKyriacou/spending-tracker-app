@@ -26,8 +26,7 @@ const FormSchema = z.object({
 export default function CreateCategoryForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-    },
+    defaultValues: {},
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -54,9 +53,10 @@ export default function CreateCategoryForm() {
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input
+                  {...field}
                   placeholder="Name"
                   inputMode="text"
-                  {...field}
+                  value={field.value || ""}
                 />
               </FormControl>
               <FormMessage />
