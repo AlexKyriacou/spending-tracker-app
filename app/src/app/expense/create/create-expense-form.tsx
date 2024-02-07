@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,9 +16,7 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -39,19 +36,22 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 
+/**
+ * Default schema for creating an expense.
+ */
 const defaultSchema = z.object({
   amount: z.coerce
     .number({
       required_error: "Please enter an amount.",
-      invalid_type_error: "Please enter an number.",
+      invalid_type_error: "Please enter a number.",
     })
     .nonnegative("Must be a positive number")
     .multipleOf(0.01, {
-      message: "Must be a maximum of 2 decimal places",
+      message: "Must have a maximum of 2 decimal places",
     }),
 
   category: z.string({
-    required_error: "Please select an category.",
+    required_error: "Please select a category.",
   }),
 
   date: z.coerce.date({
@@ -64,6 +64,9 @@ const defaultSchema = z.object({
   }),
 });
 
+/**
+ * Schema for validating non-recurring expenses.
+ */
 const isNotRecurringSchema = z.object({
   recurring: z.literal(false),
   recurrencePeriod: z.string().optional(),
@@ -71,6 +74,9 @@ const isNotRecurringSchema = z.object({
   recurrenceEndDate: z.coerce.date().optional(),
 });
 
+/**
+ * Schema used for validating recurring expenses.
+ */
 const isRecurringSchema = z.object({
   recurring: z.literal(true),
   recurrenceValue: z.coerce
@@ -93,6 +99,12 @@ const isRecurringSchema = z.object({
     .optional(),
 });
 
+/**
+ * Defines a discriminated union schema for the "recurring" property.
+ * When the "recurring" property is set to true, the schema is "isRecurringSchema".
+ * When the "recurring" property is set to false, the schema is "isNotRecurringSchema".
+ * https://github.com/colinhacks/zod/discussions/2099#discussioncomment-6209674
+ */
 const schemaCond = z.discriminatedUnion("recurring", [
   isRecurringSchema,
   isNotRecurringSchema,
