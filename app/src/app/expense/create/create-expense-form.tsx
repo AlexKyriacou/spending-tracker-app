@@ -53,7 +53,7 @@ const FormSchema = z.object({
     required_error: "Please select an category.",
   }),
   date: z.coerce.date({
-    required_error: "Please select a date and time",
+    required_error: "Please select a date",
     invalid_type_error: "That's not a date!",
   }),
   recurrenceValue: z.coerce
@@ -68,10 +68,12 @@ const FormSchema = z.object({
   recurrencePeriod: z.string({
     required_error: "Please select a period.",
   }),
-  recurrenceEndDate: z.coerce.date({
-    required_error: "Please select an end date.",
-    invalid_type_error: "That's not a date!",
-  }),
+  recurrenceEndDate: z.coerce
+    .date({
+      required_error: "Please select an end date.",
+      invalid_type_error: "That's not a date!",
+    })
+    .optional(),
 });
 
 export default function CreateExpenseForm() {
@@ -190,7 +192,7 @@ export default function CreateExpenseForm() {
         <div className="flex items-center space-x-2">
           <Switch
             checked={isRecurring}
-            onCheckedChange={value => setIsRecurring(value)}
+            onCheckedChange={(value) => setIsRecurring(value)}
             id="recurring"
           />
           <Label htmlFor="recurring">Recurring</Label>
@@ -216,7 +218,10 @@ export default function CreateExpenseForm() {
               name="recurrencePeriod"
               render={({ field }) => (
                 <Select
-                  onValueChange={field.onChange}
+                  {...field}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                  }}
                   defaultValue={field.value}>
                   <SelectTrigger className="mx-2 w-[180px]">
                     <SelectValue />
