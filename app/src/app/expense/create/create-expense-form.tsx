@@ -39,7 +39,7 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 
-const FormSchema = z.object({
+const defaultSchema = z.object({
   amount: z.coerce
     .number({
       required_error: "Please enter an amount.",
@@ -59,6 +59,20 @@ const FormSchema = z.object({
     invalid_type_error: "That's not a date!",
   }),
 
+  recurring: z.boolean({
+    required_error: "Please select a recurring option.",
+  }),
+});
+
+const isNotRecurringSchema = z.object({
+  recurring: z.literal(false),
+  recurrencePeriod: z.string().optional(),
+  recurrenceValue: z.coerce.number().optional(),
+  recurrenceEndDate: z.coerce.date().optional(),
+});
+
+const isRecurringSchema = z.object({
+  recurring: z.literal(true),
   recurrenceValue: z.coerce
     .number({
       required_error: "Please enter a value.",
@@ -68,22 +82,23 @@ const FormSchema = z.object({
     .nonnegative({
       message: "Must be a positive number",
     }),
-
   recurrencePeriod: z.string({
     required_error: "Please select a period.",
   }),
-
   recurrenceEndDate: z.coerce
     .date({
       required_error: "Please select an end date.",
       invalid_type_error: "That's not a date!",
     })
     .optional(),
-
-  recurring: z.boolean({
-    required_error: "Please select a recurring option.",
-  }),
 });
+
+const schemaCond = z.discriminatedUnion("recurring", [
+  isRecurringSchema,
+  isNotRecurringSchema,
+]);
+
+const FormSchema = z.intersection(schemaCond, defaultSchema);
 
 export default function CreateExpenseForm() {
   const [isRecurring, setIsRecurring] = useState(false);
