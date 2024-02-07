@@ -82,7 +82,7 @@ const isRecurringSchema = z.object({
   recurrenceValue: z.coerce
     .number({
       required_error: "Please enter a value.",
-      invalid_type_error: "Please enter a number.",
+      invalid_type_error: "Please enter a how often this will recur.",
     })
     .multipleOf(1, { message: "Must be a whole number" })
     .nonnegative({
@@ -179,11 +179,11 @@ export default function CreateExpenseForm() {
                   <SelectItem value="Ducks">Ducks</SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
               <FormDescription>
                 Or add a {""}
                 <Link href="/category/create">new category</Link>
               </FormDescription>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -247,76 +247,98 @@ export default function CreateExpenseForm() {
           )}
         />
         {isRecurring && (
-          <div className="flex items-center space-x-4 rounded-md border p-4">
-            <Label className="mx-2 whitespace-nowrap">Occurs every</Label>
-            <FormField
-              control={form.control}
-              name="recurrenceValue"
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  value={field.value || ""}
-                  className="mx-2 w-20"
-                  placeholder="0"
-                  type="number"
-                  inputMode="numeric"
-                />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="recurrencePeriod"
-              render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="mx-2 w-[180px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Days">Days</SelectItem>
-                    <SelectItem value="Weeks">Weeks</SelectItem>
-                    <SelectItem value="Months">Months</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            <Label className="mx-2 whitespace-nowrap">ending</Label>{" "}
-            <FormField
-              control={form.control}
-              name="recurrenceEndDate"
-              render={({ field }) => (
-                <Popover>
-                  <PopoverTrigger asChild>
+          <div>
+            <div className="flex items-center space-x-4 rounded-md border p-4">
+              <Label className="mx-2 whitespace-nowrap">Occurs every</Label>
+              <FormField
+                control={form.control}
+                name="recurrenceValue"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    value={field.value || ""}
+                    className="mx-2 w-20"
+                    placeholder="0"
+                    type="number"
+                    inputMode="numeric"
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="recurrencePeriod"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
                     <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn("pl-3 text-left font-normal w-[180px]")}>
-                        {field.value ? (
-                          format(field.value, "PP")
-                        ) : (
-                          <span>Never</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
+                      <SelectTrigger className="mx-2 w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
                     </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto p-0"
-                    align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={(date) => field.onChange(date)}
-                      disabled={(date) => date < new Date("1900-01-01")}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              )}
-            />
+                    <SelectContent>
+                      <SelectItem value="Days">Days</SelectItem>
+                      <SelectItem value="Weeks">Weeks</SelectItem>
+                      <SelectItem value="Months">Months</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <Label className="mx-2 whitespace-nowrap">ending</Label>{" "}
+              <FormField
+                control={form.control}
+                name="recurrenceEndDate"
+                render={({ field }) => (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "pl-3 text-left font-normal w-[180px]"
+                          )}>
+                          {field.value ? (
+                            format(field.value, "PP")
+                          ) : (
+                            <span>Never</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-0"
+                      align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => field.onChange(date)}
+                        disabled={(date) => date < new Date("1900-01-01")}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                )}
+              />
+            </div>
+            {form.formState.errors.recurrenceValue && (
+              /* Error messages for recurrence Value field */
+              <p className="text-sm font-medium text-destructive">
+                {form.formState.errors.recurrenceValue.message}
+              </p>
+            )}
+            {form.formState.errors.recurrencePeriod && (
+              /* Error messages for recurrence Period field */
+              <p className="text-sm font-medium text-destructive">
+                {form.formState.errors.recurrencePeriod.message}
+              </p>
+            )}
+            {form.formState.errors.recurrenceEndDate && (
+              /* Error messages for recurrence End Date field */
+              <p className="text-sm font-medium text-destructive">
+                {form.formState.errors.recurrenceEndDate.message}
+              </p>
+            )}
           </div>
         )}
         <Button type="submit">Submit</Button>

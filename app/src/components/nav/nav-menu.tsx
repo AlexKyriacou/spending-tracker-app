@@ -12,7 +12,7 @@ export function NavMenu() {
           <div className="ml-auto flex items-center space-x-4">
             <ModeToggle />
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage src="https://github.com/AlexKyriacou.png" />
               <AvatarFallback>Fill In</AvatarFallback>
             </Avatar>
           </div>
