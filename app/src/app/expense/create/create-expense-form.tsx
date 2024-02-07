@@ -43,7 +43,7 @@ const FormSchema = z.object({
   amount: z.coerce
     .number({
       required_error: "Please enter an amount.",
-      invalid_type_error: "Please enter an amount.",
+      invalid_type_error: "Please enter an number.",
     })
     .nonnegative("Must be a positive number")
     .multipleOf(0.01, {
@@ -93,6 +93,7 @@ export default function CreateExpenseForm() {
     defaultValues: {
       date: new Date(),
       recurrencePeriod: "Days",
+      recurring: false,
     },
   });
 
@@ -120,10 +121,11 @@ export default function CreateExpenseForm() {
               <FormLabel>Amount</FormLabel>
               <FormControl>
                 <Input
+                  {...field}
                   placeholder="$0.00"
                   type="number"
                   inputMode="decimal"
-                  {...field}
+                  value={field.value || ""}
                 />
               </FormControl>
               <FormMessage />
@@ -225,11 +227,12 @@ export default function CreateExpenseForm() {
               name="recurrenceValue"
               render={({ field }) => (
                 <Input
+                  {...field}
+                  value={field.value || ""}
                   className="mx-2 w-20"
                   placeholder="0"
                   type="number"
                   inputMode="numeric"
-                  {...field}
                 />
               )}
             />
