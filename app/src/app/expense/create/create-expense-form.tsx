@@ -238,14 +238,13 @@ export default function CreateExpenseForm() {
               name="recurrencePeriod"
               render={({ field }) => (
                 <Select
-                  {...field}
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                  }}
+                  onValueChange={field.onChange}
                   defaultValue={field.value}>
-                  <SelectTrigger className="mx-2 w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <FormControl>
+                    <SelectTrigger className="mx-2 w-[180px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
                   <SelectContent>
                     <SelectItem value="Days">Days</SelectItem>
                     <SelectItem value="Weeks">Weeks</SelectItem>
@@ -280,7 +279,7 @@ export default function CreateExpenseForm() {
                     <Calendar
                       mode="single"
                       selected={field.value}
-                      onSelect={field.onChange}
+                      onSelect={(date) => field.onChange(date)}
                       disabled={(date) => date < new Date("1900-01-01")}
                       initialFocus
                     />
