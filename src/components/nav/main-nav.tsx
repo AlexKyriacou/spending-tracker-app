@@ -30,7 +30,7 @@ export function MainNav() {
         {docsConfig.mainNav?.map(
           (item) =>
             item.href && (
-              <NavigationMenuItem>
+              <NavigationMenuItem key={item.href}>
                 <Link
                   href={item.href}
                   legacyBehavior
