@@ -3,9 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { RefreshCw } from "lucide-react";
 
-import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableColumnHeader } from "./components/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableRowActions } from "./data-table-row-actions";
+import { DataTableRowActions } from "./components/data-table-row-actions";
 
 export type Transaction = {
   id: string;
