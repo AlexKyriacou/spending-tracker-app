@@ -37,7 +37,7 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 
 /**
- * Default schema for creating an expense.
+ * Default schema for creating an transaction.
  */
 const defaultSchema = z.object({
   amount: z.coerce
@@ -65,7 +65,7 @@ const defaultSchema = z.object({
 });
 
 /**
- * Schema for validating non-recurring expenses.
+ * Schema for validating non-recurring transactions.
  */
 const isNotRecurringSchema = z.object({
   recurring: z.literal(false),
@@ -75,7 +75,7 @@ const isNotRecurringSchema = z.object({
 });
 
 /**
- * Schema used for validating recurring expenses.
+ * Schema used for validating recurring transactions.
  */
 const isRecurringSchema = z.object({
   recurring: z.literal(true),
@@ -112,7 +112,7 @@ const schemaCond = z.discriminatedUnion("recurring", [
 
 const FormSchema = z.intersection(schemaCond, defaultSchema);
 
-export default function CreateExpenseForm() {
+export default function CreateTransactionForm() {
   const [isRecurring, setIsRecurring] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({

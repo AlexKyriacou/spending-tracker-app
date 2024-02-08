@@ -29,12 +29,12 @@ export function MainNav() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <Link
-            href="/expense/create"
+            href="/transaction/create"
             legacyBehavior
             passHref>
             <NavigationMenuLink
-              className={getNavLinkClassName("/expense/create")}>
-              Expenses
+              className={getNavLinkClassName("/transaction/create")}>
+              Transactions
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

@@ -2,7 +2,7 @@ import { NavMenu } from "@/components/nav/nav-menu";
 import { Separator } from "@/components/ui/separator";
 import CreateCategoryForm from "./create-category-form";
 
-export default function CreateExpensePage() {
+export default function CreateTransactionPage() {
   return (
     <>
       <div className="flex-1 lg:max-w-2xl mx-auto space-y-6 pt-10">
