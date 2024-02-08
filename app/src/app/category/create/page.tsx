@@ -1,4 +1,3 @@
-import { NavMenu } from "@/components/nav/nav-menu";
 import { Separator } from "@/components/ui/separator";
 import CreateCategoryForm from "./create-category-form";
 
