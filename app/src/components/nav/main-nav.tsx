@@ -10,6 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
+import { docsConfig } from "@/config/docs";
 
 const currentPageNavLinkStyle = "underline";
 
@@ -24,29 +25,24 @@ export function MainNav() {
   };
 
   return (
-    <NavigationMenu>
+    <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
-        <NavigationMenuItem>
-          <Link
-            href="/transaction"
-            legacyBehavior
-            passHref>
-            <NavigationMenuLink className={getNavLinkClassName("/transaction")}>
-              Transactions
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link
-            href="/category/create"
-            legacyBehavior
-            passHref>
-            <NavigationMenuLink
-              className={getNavLinkClassName("/category/create")}>
-              Categories
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        {docsConfig.mainNav?.map(
+          (item) =>
+            item.href && (
+              <NavigationMenuItem>
+                <Link
+                  href={item.href}
+                  legacyBehavior
+                  passHref>
+                  <NavigationMenuLink
+                    className={getNavLinkClassName(item.href)}>
+                    {item.title}
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            )
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );
