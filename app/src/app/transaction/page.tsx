@@ -5,6 +5,8 @@ import { DataTable } from "./components/data-table";
 import { mobileColumns } from "./mobile-columns";
 import { useIsMobile } from "@/lib/use-screen-width";
 import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const payments: Transaction[] = [
   {
@@ -126,7 +128,21 @@ export default function TransactionPage() {
   }, []);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="flex-1 lg:max-w-5xl mx-auto space-y-6 pt-10">
+      <div className="flex">
+        <div>
+          <h3 className="text-lg font-medium">Transactions</h3>
+          <p className="text-sm text-muted-foreground">
+            View and manage your past transaction.
+          </p>
+        </div>
+        <Button
+          asChild
+          variant="secondary"
+          className="mt-4 ml-auto">
+          <Link href="transaction/create">Add New Transaction</Link>
+        </Button>
+      </div>
       <DataTable
         columns={isMobile ? mobileColumns : columns}
         data={data}
