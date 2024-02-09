@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "release": {
+    "branches": ["master", "main"]
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-avatar": "^1.0.4",
