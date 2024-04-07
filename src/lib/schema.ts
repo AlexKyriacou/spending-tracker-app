@@ -4,6 +4,10 @@ import {
   text,
   primaryKey,
   integer,
+  uuid,
+  pgEnum,
+  date,
+  real,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 
@@ -58,3 +62,45 @@ export const verificationTokens = pgTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   })
 );
+
+export const transactionType = pgEnum("transaction_type", [
+  "INCOME",
+  "EXPENSE",
+]);
+export const recurrencePeriod = pgEnum("recurrence_period", [
+  "DAYS",
+  "WEEKS",
+  "MONTHS",
+]);
+
+export const transaction = pgTable("transaction", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  date: date("date", { mode: "date" }).notNull(),
+  amount: real("amount").notNull(),
+  categoryId: uuid("category_id")
+    .notNull()
+    .references(() => category.id, { onDelete: "cascade" }),
+  type: transactionType("type").notNull(),
+  recurrenceId: uuid("recurrence_id").references(() => recurrence.id, {
+    onDelete: "cascade",
+  }),
+});
+
+export const recurrence = pgTable("recurrence", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  value: integer("value"),
+  period: recurrencePeriod("period"),
+  endDate: date("end_date", { mode: "date" }),
+});
+
+export const category = pgTable("category", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  icon: text("icon"),
+});

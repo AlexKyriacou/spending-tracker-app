@@ -8,6 +8,13 @@
       "when": 1712474259108,
       "tag": "0000_goofy_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1712489517344,
+      "tag": "0001_soft_drax",
+      "breakpoints": true
     }
   ]
 }
