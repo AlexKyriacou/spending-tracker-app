@@ -74,6 +74,6 @@ const schemaCond = z.discriminatedUnion("recurring", [
   isNotRecurringSchema,
 ]);
 
-const CreateTransactionFormaSchema = z.intersection(schemaCond, defaultSchema);
+const CreateTransactionFormSchema = z.intersection(schemaCond, defaultSchema);
 
-export default CreateTransactionFormaSchema;
+export default CreateTransactionFormSchema;

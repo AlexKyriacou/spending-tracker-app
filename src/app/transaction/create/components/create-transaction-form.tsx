@@ -34,12 +34,12 @@ import {
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
-import CreateTransactionFormaSchema from "./form-schema";
+import CreateTransactionFormSchema from "./form-schema";
 import RecurringTransactionField from "./recurring-transaction-field";
 
 export default function CreateTransactionForm() {
-  const form = useForm<z.infer<typeof CreateTransactionFormaSchema>>({
-    resolver: zodResolver(CreateTransactionFormaSchema),
+  const form = useForm<z.infer<typeof CreateTransactionFormSchema>>({
+    resolver: zodResolver(CreateTransactionFormSchema),
     defaultValues: {
       date: new Date(),
       recurrencePeriod: "Days",
@@ -49,15 +49,30 @@ export default function CreateTransactionForm() {
 
   const [isRecurring, setIsRecurring] = useState(false);
 
-  function onSubmit(data: z.infer<typeof CreateTransactionFormaSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+  async function onSubmit(data: z.infer<typeof CreateTransactionFormSchema>) {
+    const response = await fetch("/api/transactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
     });
+    if (!response?.ok) {
+      return toast({
+        title: "Something went wrong.",
+        description: "Your post was not created. Please try again.",
+        variant: "destructive",
+      });
+    }
+    else {
+      const newTransaction = await response.json();
+      return toast({
+        title: "Success!",
+        description: "Your post was created with id " + newTransaction + ".",
+        variant: "default",
+      });
+    }
+    console.log(response.body);
   }
 
   return (
@@ -159,7 +174,7 @@ export default function CreateTransactionForm() {
             <FormItem className="flex items-center space-x-2">
               <FormLabel>Recurring</FormLabel>
               <FormControl>
-              <Switch
+                <Switch
                   checked={isRecurring}
                   onCheckedChange={(value: boolean) => {
                     setIsRecurring(value);
