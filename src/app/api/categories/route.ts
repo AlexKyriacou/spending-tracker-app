@@ -5,6 +5,7 @@ import { category } from "@/lib/schema";
 import { Session } from "next-auth";
 import { createInsertSchema } from "drizzle-zod";
 import { eq } from "drizzle-orm";
+import { categoryFormSchema } from "@/app/category/create/components/form-schema";
 
 type NewCategory = typeof category.$inferInsert;
 const insertCategorySchema = createInsertSchema(category);
@@ -35,7 +36,8 @@ export async function POST(req: Request) {
     const user = await validateSession(session);
 
     const json = await req.json();
-    const body = insertCategorySchema.parse(json);
+    const body = categoryFormSchema.parse(json);
+    console.log("Body:", body);
 
     const newCategory = createCategoryObject(user.id!, body);
     await insertCategory(newCategory);
@@ -62,12 +64,12 @@ const validateSession = async (session: Session | null) => {
 
 const createCategoryObject = (
   userId: string,
-  body: z.infer<typeof insertCategorySchema>
+  body: z.infer<typeof categoryFormSchema>
 ) => {
   const newCategory: NewCategory = {
-    userId,
+    userId: userId,
     name: body.name,
-    type: body.type,
+    type: body.type as "INCOME" | "EXPENSE",
     icon: body.icon,
   };
 
