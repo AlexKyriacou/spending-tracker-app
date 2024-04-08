@@ -2,8 +2,7 @@ import { auth } from "@/lib/auth";
 import * as z from "zod";
 import { db } from "@/lib/db";
 import TransactionSchema from "@/app/transaction/create/components/form-schema";
-import { transaction, category, recurrence } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { transaction, recurrence } from "@/lib/schema";
 import { Session } from "next-auth";
 
 type NewTransaction = typeof transaction.$inferInsert;
@@ -17,11 +16,6 @@ export async function POST(req: Request) {
     const json = await req.json();
     const body = TransactionSchema.parse(json);
 
-    const categoryId = await getCategoryId(body.category);
-    if (!categoryId) {
-      return new Response("Category not found", { status: 404 });
-    }
-
     let recurrenceId: string | null = null;
     const newRecurrence = createRecurrenceObject(body);
     if (newRecurrence) {
@@ -30,7 +24,6 @@ export async function POST(req: Request) {
 
     const newTransaction = createTransactionObject(
       user.id!,
-      categoryId,
       recurrenceId,
       body
     );
@@ -54,16 +47,6 @@ const validateSession = async (session: Session | null) => {
   }
 
   return user;
-};
-
-const getCategoryId = async (categoryName: string) => {
-  const categoryId = await db
-    .select({ category_id: category.id })
-    .from(category)
-    .where(eq(category.name, categoryName))
-    .limit(1);
-
-  return categoryId.length > 0 ? categoryId[0].category_id : null;
 };
 
 const getExpenseType = (amount: number): "EXPENSE" | "INCOME" => {
@@ -97,7 +80,6 @@ const insertRecurrence = async (newRecurrence: NewRecurrence) => {
 
 const createTransactionObject = (
   userId: string,
-  categoryId: string,
   recurrenceId: string | null,
   body: z.infer<typeof TransactionSchema>
 ) => {
@@ -106,7 +88,7 @@ const createTransactionObject = (
     userId,
     date: new Date(body.date),
     amount: body.amount,
-    categoryId,
+    categoryName: body.category,
     type: expense_type,
     recurrenceId,
   };
