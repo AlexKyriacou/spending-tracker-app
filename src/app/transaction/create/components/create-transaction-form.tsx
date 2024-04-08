@@ -7,19 +7,11 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
@@ -31,11 +23,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import CreateTransactionFormSchema from "./form-schema";
 import RecurringTransactionField from "./recurring-transaction-field";
+import CategorySelectField from "./categories-select-field";
 
 export default function CreateTransactionForm() {
   const form = useForm<z.infer<typeof CreateTransactionFormSchema>>({
@@ -96,34 +88,7 @@ export default function CreateTransactionForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Potatos">Potatos</SelectItem>
-                  <SelectItem value="Coffee">Coffee</SelectItem>
-                  <SelectItem value="Ducks">Ducks</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-              <FormDescription>
-                Or add a {""}
-                <Link href="/category/create">new category</Link>
-              </FormDescription>
-            </FormItem>
-          )}
-        />
+        <CategorySelectField control={form.control} categoryType="EXPENSE" />
         <FormField
           control={form.control}
           name="date"
