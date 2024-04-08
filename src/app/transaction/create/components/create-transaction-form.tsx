@@ -42,7 +42,6 @@ export default function CreateTransactionForm() {
     resolver: zodResolver(CreateTransactionFormSchema),
     defaultValues: {
       date: new Date(),
-      recurrencePeriod: "Days",
       recurring: false,
     },
   });
@@ -63,8 +62,7 @@ export default function CreateTransactionForm() {
         description: "Your post was not created. Please try again.",
         variant: "destructive",
       });
-    }
-    else {
+    } else {
       const newTransaction = await response.json();
       return toast({
         title: "Success!",
@@ -72,7 +70,6 @@ export default function CreateTransactionForm() {
         variant: "default",
       });
     }
-    console.log(response.body);
   }
 
   return (

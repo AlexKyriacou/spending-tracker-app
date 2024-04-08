@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import TransactionSchema from "@/app/transaction/create/components/form-schema";
 import { transaction, recurrence } from "@/lib/schema";
 import { Session } from "next-auth";
+import { ExtractTablesWithRelations } from "drizzle-orm";
+import { PgTransaction } from "drizzle-orm/pg-core";
+import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 
 type NewTransaction = typeof transaction.$inferInsert;
 type NewRecurrence = typeof recurrence.$inferInsert;
@@ -16,18 +19,19 @@ export async function POST(req: Request) {
     const json = await req.json();
     const body = TransactionSchema.parse(json);
 
-    let recurrenceId: string | null = null;
-    const newRecurrence = createRecurrenceObject(body);
-    if (newRecurrence) {
-      recurrenceId = await insertRecurrence(newRecurrence);
-    }
-
-    const newTransaction = createTransactionObject(
-      user.id!,
-      recurrenceId,
-      body
-    );
-    const newTransactionId = await insertTransaction(newTransaction);
+    const newTransactionId = await db.transaction(async (tx) => {
+      let recurrenceId: string | null = null;
+      const newRecurrence = createRecurrenceObject(body);
+      if (newRecurrence) {
+        recurrenceId = await insertRecurrence(tx, newRecurrence);
+      }
+      const newTransaction = createTransactionObject(
+        user.id!,
+        recurrenceId,
+        body
+      );
+      return await insertTransaction(tx, newTransaction);
+    });
 
     console.log("New transaction created:", newTransactionId);
     return new Response(JSON.stringify(newTransactionId));
@@ -49,10 +53,6 @@ const validateSession = async (session: Session | null) => {
   return user;
 };
 
-const getExpenseType = (amount: number): "EXPENSE" | "INCOME" => {
-  return amount < 0 ? "EXPENSE" : "INCOME";
-};
-
 const createRecurrenceObject = (body: z.infer<typeof TransactionSchema>) => {
   if (!body.recurring) {
     return null;
@@ -67,9 +67,16 @@ const createRecurrenceObject = (body: z.infer<typeof TransactionSchema>) => {
   return newRecurrence;
 };
 
-const insertRecurrence = async (newRecurrence: NewRecurrence) => {
+const insertRecurrence = async (
+  dbTransaction: PgTransaction<
+    PostgresJsQueryResultHKT,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+  >,
+  newRecurrence: NewRecurrence
+) => {
   const newRecurrenceId = (
-    await db
+    await dbTransaction
       .insert(recurrence)
       .values(newRecurrence)
       .returning({ recurrenceId: recurrence.id })
@@ -83,7 +90,7 @@ const createTransactionObject = (
   recurrenceId: string | null,
   body: z.infer<typeof TransactionSchema>
 ) => {
-  const expense_type = getExpenseType(body.amount);
+  const expense_type = "EXPENSE";
   const newTransaction: NewTransaction = {
     userId,
     date: new Date(body.date),
@@ -96,9 +103,17 @@ const createTransactionObject = (
   return newTransaction;
 };
 
-const insertTransaction = async (newTransaction: NewTransaction) => {
+const insertTransaction = async (
+  dbTransaction: PgTransaction<
+    PostgresJsQueryResultHKT,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+  >,
+  newTransaction: NewTransaction
+) => {
+  console.log("Inserting transaction:", newTransaction);
   const newTransactionId = (
-    await db
+    await dbTransaction
       .insert(transaction)
       .values(newTransaction)
       .returning({ newTransactionId: transaction.id })

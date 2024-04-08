@@ -49,8 +49,8 @@ const RecurringTransactionField: React.FC<{
               onValueChange={field.onChange}
               defaultValue={field.value}>
               <FormControl>
-                <SelectTrigger className="mx-2 w-[180px]">
-                  <SelectValue />
+                <SelectTrigger className="mx-2 w-[180px] text-muted-foreground">
+                  <SelectValue placeholder="Select a Period" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
