@@ -1,5 +1,5 @@
 {
-  "id": "db51fcad-f0fb-4e6d-b1a7-28e2191e1188",
+  "id": "5e8258fb-c108-4d9f-986e-14ce9dc08562",
   "prevId": "11ae43f9-61cc-49ef-b6de-23725d27c4af",
   "version": "5",
   "dialect": "pg",
@@ -106,13 +106,6 @@
       "name": "category",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
         "userId": {
           "name": "userId",
           "type": "text",
@@ -122,6 +115,12 @@
         "name": {
           "name": "name",
           "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "transaction_type",
           "primaryKey": false,
           "notNull": true
         },
@@ -148,7 +147,16 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "category_userId_name_type_pk": {
+          "name": "category_userId_name_type_pk",
+          "columns": [
+            "userId",
+            "name",
+            "type"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "recurrence": {
@@ -257,9 +265,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "category_id": {
-          "name": "category_id",
-          "type": "uuid",
+        "category_name": {
+          "name": "category_name",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -291,19 +299,6 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "transaction_category_id_category_id_fk": {
-          "name": "transaction_category_id_category_id_fk",
-          "tableFrom": "transaction",
-          "tableTo": "category",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "transaction_recurrence_id_recurrence_id_fk": {
           "name": "transaction_recurrence_id_recurrence_id_fk",
           "tableFrom": "transaction",
@@ -316,6 +311,23 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "transaction_category_fk": {
+          "name": "transaction_category_fk",
+          "tableFrom": "transaction",
+          "tableTo": "category",
+          "columnsFrom": [
+            "userId",
+            "category_name",
+            "type"
+          ],
+          "columnsTo": [
+            "userId",
+            "name",
+            "type"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},

@@ -8,6 +8,7 @@ import {
   pgEnum,
   date,
   real,
+  foreignKey,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 
@@ -73,21 +74,31 @@ export const recurrencePeriod = pgEnum("recurrence_period", [
   "MONTHS",
 ]);
 
-export const transaction = pgTable("transaction", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  date: date("date", { mode: "date" }).notNull(),
-  amount: real("amount").notNull(),
-  categoryId: uuid("category_id")
-    .notNull()
-    .references(() => category.id, { onDelete: "cascade" }),
-  type: transactionType("type").notNull(),
-  recurrenceId: uuid("recurrence_id").references(() => recurrence.id, {
-    onDelete: "cascade",
-  }),
-});
+export const transaction = pgTable(
+  "transaction",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    date: date("date", { mode: "date" }).notNull(),
+    amount: real("amount").notNull(),
+    categoryName: text("category_name").notNull(),
+    type: transactionType("type").notNull(),
+    recurrenceId: uuid("recurrence_id").references(() => recurrence.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => {
+    return {
+      categoryForeignKey: foreignKey({
+        columns: [table.userId, table.categoryName, table.type],
+        foreignColumns: [category.userId, category.name, category.type],
+        name: "transaction_category_fk",
+      }).onDelete("cascade").onUpdate("cascade"),
+    };
+  }
+);
 
 export const recurrence = pgTable("recurrence", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -96,11 +107,17 @@ export const recurrence = pgTable("recurrence", {
   endDate: date("end_date", { mode: "date" }),
 });
 
-export const category = pgTable("category", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  icon: text("icon"),
-});
+export const category = pgTable(
+  "category",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    type: transactionType("type").notNull(),
+    icon: text("icon"),
+  },
+  (c) => ({
+    compoundKey: primaryKey({ columns: [c.userId, c.name, c.type] }),
+  })
+);
